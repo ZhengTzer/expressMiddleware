@@ -2,8 +2,11 @@ const express = require('express')
 const useragent = require('express-useragent')
 const app = express()
 const port = 3000
+const serverLog = require('./serverLog')
 
 app.use(useragent.express())
+app.get('/favicon.ico', (req, res) => res.status(204))
+app.use(serverLog.logger)
 
 app.get('/', (req, res) => {
   res.send('列出全部 Todo')
@@ -23,21 +26,4 @@ app.post('/', (req, res) => {
 
 app.listen(port, () => {
   console.log(`App running on port ${port}`)
-})
-
-// middleware
-app.use(function (req, res, next) {
-  const reqTime = new Date()
-  res.on('finish', () => {
-    const resTime = new Date()
-    const totalTime = resTime - reqTime
-    console.log(
-      `request time: ${reqTime.toLocaleString()} || respond time: ${resTime.toLocaleString()} || request type: ${
-        req.method
-      } || from ${
-        req.originalUrl
-      } || total time:${totalTime}ms || with browser: ${req.useragent.browser}`
-    )
-  })
-  next()
 })
